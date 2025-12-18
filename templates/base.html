@@ -1,0 +1,600 @@
+<!-- templates/users/base.html -->
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}VetMis — Цифровой ветпаспорт{% endblock %}</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+    :root {
+      --primary: #4e73df;
+      --primary-dark: #3a5bc7;
+      --success: #1cc88a;
+      --light: #f8f9fc;
+      --dark: #333;
+      --gray: #6c757d;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), #3a5bc7);
+      color: white;
+      padding: 1rem 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header .logo::before {
+      content: "🐾";
+      font-size: 1.6rem;
+    }
+
+    header nav a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      margin-left: 1.2rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    header nav a:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Main content */
+    main {
+      padding: 3rem 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--primary-dark);
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e1e5eb;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      text-decoration-line: none;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-link {
+      background: none;
+      color: var(--primary);
+      padding: 0;
+      text-decoration: none;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-link:hover {
+      text-decoration: none;
+      color: var(--primary-dark);
+      transform: none;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-4 {
+      margin-top: 1.5rem;
+    }
+
+    .mb-0 {
+      margin-bottom: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    /* Messages */
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #d1f0e0;
+      color: #107d55;
+      border-left: 4px solid var(--success);
+    }
+
+    .alert-error {
+      background: #fde8e8;
+      color: #a82a2a;
+      border-left: 4px solid #e74a3b;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.8rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      header .container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      header nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    /* Floating input style */
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      width: 100%;
+      padding: 16px 16px 16px 16px;
+      font-size: 1rem;
+      border: 2px solid #e1e5eb;
+      border-radius: var(--radius);
+      background: white;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      outline: none;
+    }
+
+    .input-group label {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      font-size: 1rem;
+      color: #6c757d;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Когда поле в фокусе или заполнено — метка поднимается */
+    input:focus+label,
+    input:not(:placeholder-shown)+label,
+    select:focus+label,
+    select:not([value=""])+label,
+    textarea:focus+label,
+    textarea:not(:placeholder-shown)+label {
+      top: -10px;
+      left: 12px;
+      font-size: 0.85rem;
+      background: white;
+      padding: 0 6px;
+      color: var(--primary);
+      border-radius: 4px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+    }
+
+    /* Placeholder должен быть пустым для :not(:placeholder-shown) */
+    .input-group input::placeholder {
+      opacity: 0;
+    }
+
+    /* Анимированные иконки животных */
+    .animal-icon {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 12px;
+    }
+
+    /* Собака: бег (покачивание) */
+    .dog-run {
+      animation: run-wiggle 1.5s ease-in-out infinite;
+    }
+
+    @keyframes run-wiggle {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      25% {
+        transform: rotate(3deg);
+      }
+
+      75% {
+        transform: rotate(-3deg);
+      }
+    }
+
+    /* Кот: прыжок */
+    .cat-bounce {
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    /* Птица: мах крыльями */
+    .bird-flap {
+      animation: flap 0.8s ease-in-out infinite;
+    }
+
+    @keyframes flap {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform: rotate(12deg);
+      }
+    }
+
+    /* Хомяк: копание */
+    .rodent-dig .paw {
+      animation: dig 1.2s ease-in-out infinite;
+    }
+
+    @keyframes dig {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(5px);
+      }
+    }
+
+    /* Кролик: прыжок */
+    .rabbit-hop {
+      animation: hop 1.8s ease-in-out infinite;
+    }
+
+    @keyframes hop {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    /* Ящерица: ползание */
+    .reptile-crawl {
+      animation: crawl 3s linear infinite;
+    }
+
+    @keyframes crawl {
+      0% {
+        transform: translateX(0);
+      }
+
+      50% {
+        transform: translateX(5px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* Стиль по умолчанию */
+    .default-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .auth-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      border-radius: 50px;
+    }
+
+    .user-greeting {
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .btn-sm {
+      padding: 6px 16px;
+      font-size: 0.95rem;
+      transform: none !important;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-light {
+      background: white;
+      color: var(--primary);
+      border: none;
+    }
+
+    .btn-light:hover {
+      background: #f0f4ff;
+      transform: translateY(-2px);
+    }
+
+    .btn-purple {
+      background: #6f42c1;
+      color: white;
+      border: none;
+    }
+
+    .btn-purple:hover {
+      background: #5a32a3;
+      transform: translateY(-2px);
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .auth-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="logo">VetMis</div>
+      <div class="auth-nav">
+        {% if user.is_authenticated %}
+        <div class="user-menu">
+          <span class="user-greeting">
+            {% if user.user_type == 'owner' %}👑 Владелец
+            {% elif user.user_type == 'vet' %}⚕️ Ветеринар
+            {% else %}🏢 Админ клиники{% endif %}
+          </span>
+          <a href="{% if user.user_type == 'owner' %}{% url 'pets:pet_list' %}{% else %}{% url 'clinics:clinic_list' %}{% endif %}"
+            class="btn btn-sm">Кабинет</a>
+          <a href="{% url 'users:logout' %}" class="btn btn-outline">Выйти</a>
+        </div>
+        {% else %}
+        <div class="auth-buttons">
+          <a href="{% url 'users:login_owner' %}" class="btn btn-light">Войти как владелец</a>
+          <a href="{% url 'users:login_clinic' %}" class="btn btn-purple">Войти как клиника</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="container">
+    &copy; 2025 VetMis — Цифровой ветеринарный паспорт. Все права защищены.
+  </footer>
+
+  <!-- Легкий JS для улучшения UX -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Добавляем "глазик" для пароля (опционально)
+      const passwordFields = document.querySelectorAll('input[type="password"]');
+      passwordFields.forEach(field => {
+        if (field.parentNode.querySelector('.toggle-password')) return;
+
+        const toggle = document.createElement('button');
+        toggle.type = 'button';
+        toggle.innerHTML = '👁️';
+        toggle.style = `
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: var(--gray);
+          cursor: pointer;
+          font-size: 1.2rem;
+        `;
+        toggle.classList.add('toggle-password');
+
+        const wrapper = document.createElement('div');
+        wrapper.style = 'position: relative;';
+        field.parentNode.insertBefore(wrapper, field);
+        wrapper.appendChild(field);
+        wrapper.appendChild(toggle);
+
+        toggle.addEventListener('click', () => {
+          field.type = field.type === 'password' ? 'text' : 'password';
+          toggle.innerHTML = field.type === 'password' ? '👁️' : '🙈';
+        });
+      });
+
+      // Анимация кнопок
+      const buttons = document.querySelectorAll('.btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('mousedown', () => btn.style.transform = 'translateY(0)');
+        btn.addEventListener('mouseup', () => btn.style.transform = 'translateY(-2px)');
+      });
+    });
+    // Добавим пустой placeholder, если его нет
+    document.querySelectorAll('.input-group input, .input-group textarea').forEach(input => {
+      if (!input.hasAttribute('placeholder')) {
+        input.setAttribute('placeholder', ' ');
+      }
+    });
+
+    // Для select: добавим обработчик изменения
+    document.querySelectorAll('.input-group select').forEach(select => {
+      const label = select.nextElementSibling;
+      if (label && label.tagName === 'LABEL') {
+        select.addEventListener('change', () => {
+          if (select.value) {
+            label.classList.add('filled');
+          } else {
+            label.classList.remove('filled');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

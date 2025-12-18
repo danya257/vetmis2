@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ветпаспорт: {{ pet.name }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #4e73df;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+    }
+    .header h1 {
+      color: #4e73df;
+      margin: 0 0 8px;
+    }
+    .header .icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+    .info {
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+    .info p {
+      margin: 12px 0;
+    }
+    .watermark {
+      margin-top: 3rem;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+      border-top: 1px dashed #eee;
+      padding-top: 1.5rem;
+    }
+    @media print {
+      body { margin: 0; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="icon">
+      {% if pet.species == 'dog' %}🐶
+      {% elif pet.species == 'cat' %}🐱
+      {% elif pet.species == 'bird' %}🐦
+      {% elif pet.species == 'rodent' %}🐹
+      {% elif pet.species == 'rabbit' %}🐰
+      {% elif pet.species == 'reptile' %}🦎
+      {% else %}🐾
+      {% endif %}
+    </div>
+    <h1>Цифровой ветеринарный паспорт</h1>
+    <h2>{{ pet.name }} ({{ pet.get_species_display }})</h2>
+  </div>
+
+  <div class="info">
+    <p><strong>Порода:</strong> {{ pet.breed|default:"—" }}</p>
+    <p><strong>Дата рождения:</strong> {{ pet.birth_date|default:"—" }}</p>
+    <p><strong>Номер чипа:</strong> {{ pet.chip_number|default:"—" }}</p>
+    <p><em>Документ сгенерирован автоматически. Обновляется в реальном времени.</em></p>
+  </div>
+
+  <div class="watermark">
+    Официальный QR-паспорт | VetMis | UUID: {{ pet.qr_uuid }}
+  </div>
+</body>
+</html>

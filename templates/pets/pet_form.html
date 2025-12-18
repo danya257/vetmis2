@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Редактировать{% else %}Добавить{% endif %} питомца — VetMis{% endblock %}
+
+{% block content %}
+<div class="card">
+  <h1>{% if object %}Редактировать питомца{% else %}Добавить питомца{% endif %}</h1>
+
+  <form method="post" style="margin-top: 1.5rem;">
+    {% csrf_token %}
+
+    <div class="input-group">
+      {{ form.name }}
+      <label for="{{ form.name.id_for_label }}">Имя</label>
+    </div>
+
+    <div class="input-group">
+      {{ form.species }}
+      <label for="{{ form.species.id_for_label }}">Вид</label>
+    </div>
+
+    <div class="input-group">
+      {{ form.breed }}
+      <label for="{{ form.breed.id_for_label }}">Порода (опционально)</label>
+    </div>
+
+    <div class="input-group">
+      {{ form.birth_date }}
+      <label for="{{ form.birth_date.id_for_label }}">Дата рождения</label>
+    </div>
+
+    <div class="input-group">
+      {{ form.chip_number }}
+      <label for="{{ form.chip_number.id_for_label }}">Номер чипа (опционально)</label>
+    </div>
+
+    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+      <button type="submit" class="btn" style="flex: 1;">Сохранить</button>
+      <a href="{% url 'pets:pet_list' %}" class="btn" style="background: #6c757d; flex: 1;">Отмена</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

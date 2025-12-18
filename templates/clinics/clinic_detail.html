@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ clinic.name }} — VetMis{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+  <h1>{{ clinic.name }}</h1>
+
+  <div style="margin: 1.5rem 0; padding: 1.5rem; background: #f9fbfd; border-radius: var(--radius);">
+    <p><strong>📍 Адрес:</strong> {{ clinic.address }}</p>
+    {% if clinic.phone %}<p><strong>📞 Телефон:</strong> {{ clinic.phone }}</p>{% endif %}
+    {% if clinic.email %}<p><strong>✉️ Email:</strong> {{ clinic.email }}</p>{% endif %}
+    {% if clinic.website %}
+      <p><strong>🌐 Сайт:</strong> <a href="{{ clinic.website }}" target="_blank" style="color: var(--primary); text-decoration: none;">{{ clinic.website }}</a></p>
+    {% endif %}
+    {% if clinic.description %}
+      <p><strong>📋 Описание:</strong></p>
+      <p style="margin-left: 1.2rem;">{{ clinic.description|linebreaks }}</p>
+    {% endif %}
+  </div>
+
+  <div style="margin-top: 2rem;">
+    <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 1rem;">Администраторы</h2>
+    {% if clinic.admins.all %}
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        {% for admin in clinic.admins.all %}
+          <div style="
+            background: white;
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius);
+            border: 1px solid #e1e5eb;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+          ">
+            <span style="font-weight: 600;">{{ admin.get_full_name|default:admin.username }}</span>
+            <span style="background: #e1e5eb; color: var(--gray); padding: 2px 8px; border-radius: 10px; font-size: 0.85rem;">
+              {{ admin.get_user_type_display }}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: var(--gray);">Нет назначенных администраторов.</p>
+    {% endif %}
+  </div>
+
+  <div style="margin-top: 2rem; text-align: center;">
+    <a href="{% url 'clinics:clinic_list' %}" class="btn" style="background: #6c757d;">← Назад к списку</a>
+  </div>
+</div>
+{% endblock %}
