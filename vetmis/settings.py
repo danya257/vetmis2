@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'medical_records',
     'core',
     'blog',
+    'chat',
+    'services',
+    
 ]
 
 MIDDLEWARE = [

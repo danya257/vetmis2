@@ -2,17 +2,73 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import (
+    ListView, DetailView, CreateView, UpdateView, TemplateView
+)
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.db.models import Count
+from django.utils import timezone
+
 from users.models import User
 from .models import Clinic
 from .forms import ClinicForm
+from services.models import Service, ServiceAssignment
+from pets.models import Pet
+from medical_records.models import MedicalRecord
+from chat.models import Message
 
 
-# === 1. Публичный каталог (доступен всем) ===
+# === Dashboard для клиник ===
+class ClinicDashboardView(LoginRequiredMixin, TemplateView):
+    template_name = 'clinics/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        if user.user_type not in ['vet', 'clinic_admin']:
+            raise PermissionDenied("Доступ запрещён")
+
+        clinics = Clinic.objects.filter(admins=user)
+        context['clinics'] = clinics
+
+        if clinics.exists():
+            # Все пользователи (ветеринары), связанные с этими клиниками
+            vet_ids = User.objects.filter(
+                managed_clinics__in=clinics
+            ).values_list('id', flat=True)
+
+            # 1. Питомцы с записями от этих ветеринаров
+            pets_count = Pet.objects.filter(
+                medical_records__created_by__in=vet_ids
+            ).distinct().count()
+
+            # 2. Непрочитанные сообщения
+            unread_messages = Message.objects.filter(
+                chat__vet=user,
+                is_read=False
+            ).count()
+
+            # 3. Записи за последнюю неделю
+            week_ago = timezone.now() - timezone.timedelta(days=7)
+            recent_records = MedicalRecord.objects.filter(
+                created_by__in=vet_ids,
+                created_at__gte=week_ago
+            ).count()
+
+            context.update({
+                'pets_count': pets_count,
+                'unread_messages': unread_messages,
+                'recent_records': recent_records,
+            })
+
+        return context
+
+
+# === Публичный каталог ===
 class PublicClinicListView(ListView):
     model = Clinic
     template_name = 'clinics/clinic_list_public.html'
@@ -20,7 +76,7 @@ class PublicClinicListView(ListView):
     ordering = ['name']
 
 
-# === 2. Личный кабинет клиники (только для vet / clinic_admin) ===
+# === Управление клиниками (личный кабинет) ===
 class ClinicListView(LoginRequiredMixin, ListView):
     model = Clinic
     template_name = 'clinics/clinic_list.html'
@@ -43,7 +99,7 @@ class ClinicDetailView(LoginRequiredMixin, DetailView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.user_type not in ['vet', 'clinic_admin']:
             raise PermissionDenied("Доступ запрещён.")
-        return super().dispatch(request, * args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ClinicCreateView(LoginRequiredMixin, CreateView):
@@ -58,7 +114,7 @@ class ClinicCreateView(LoginRequiredMixin, CreateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-# === 3. Регистрация новой клиники (B2B) ===
+# === Регистрация клиники ===
 class ClinicRegisterForm(UserCreationForm):
     clinic_name = forms.CharField(
         max_length=200,
@@ -94,9 +150,7 @@ class ClinicRegisterView(CreateView):
     success_url = reverse_lazy('clinics:clinic_list')
 
     def form_valid(self, form):
-        # Сохраняем пользователя
         user = form.save()
-        # Создаём клинику
         clinic = Clinic.objects.create(
             name=form.cleaned_data['clinic_name'],
             address=form.cleaned_data['clinic_address']
@@ -104,3 +158,88 @@ class ClinicRegisterView(CreateView):
         clinic.admins.add(user)
         login(self.request, user)
         return redirect(self.success_url)
+
+
+# === Услуги ===
+class ServiceListView(LoginRequiredMixin, ListView):
+    template_name = 'clinics/service_list.html'
+    context_object_name = 'services'
+
+    def get_queryset(self):
+        user = self.request.user
+        clinic_ids = Clinic.objects.filter(admins=user).values_list('id', flat=True)
+        return Service.objects.filter(clinic_id__in=clinic_ids)
+
+
+class ServiceCreateView(LoginRequiredMixin, CreateView):
+    model = Service
+    fields = ['name', 'description', 'price']
+    template_name = 'clinics/service_form.html'
+
+    def form_valid(self, form):
+        clinic = Clinic.objects.filter(admins=self.request.user).first()
+        if not clinic:
+            raise PermissionDenied
+        form.instance.clinic = clinic
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('clinics:service_list')
+
+
+class ServiceUpdateView(LoginRequiredMixin, UpdateView):
+    model = Service
+    fields = ['name', 'description', 'price']
+    template_name = 'clinics/service_form.html'
+    success_url = reverse_lazy('clinics:service_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        service = self.get_object()
+        if request.user not in service.clinic.admins.all():
+            raise PermissionDenied
+        return super().dispatch(request, *args, **kwargs)
+
+
+# === Ветеринары ===
+class VetListView(LoginRequiredMixin, ListView):
+    template_name = 'clinics/vet_list.html'
+    context_object_name = 'vets'
+
+    def get_queryset(self):
+        user = self.request.user
+        clinic_ids = Clinic.objects.filter(admins=user).values_list('id', flat=True)
+        return User.objects.filter(
+            managed_clinics__id__in=clinic_ids,
+            user_type__in=['vet', 'clinic_admin']
+        ).distinct()
+
+
+class VetDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'clinics/vet_detail.html'
+    context_object_name = 'vet'
+
+    def get_queryset(self):
+        user = self.request.user
+        clinic_ids = Clinic.objects.filter(admins=user).values_list('id', flat=True)
+        return User.objects.filter(
+            id=self.kwargs['pk'],
+            managed_clinics__id__in=clinic_ids
+        ).distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vet = self.object
+        assignments = ServiceAssignment.objects.filter(vet=vet)
+        context['assignments'] = assignments
+        return context
+class ServiceDetailView(LoginRequiredMixin, DetailView):
+    model = Service
+    template_name = 'clinics/service_detail.html'
+    context_object_name = 'service'
+
+    def dispatch(self, request, *args, **kwargs):
+        service = self.get_object()
+        if request.user not in service.clinic.admins.all():
+            raise PermissionDenied("Доступ запрещён")
+        return super().dispatch(request, *args, **kwargs)    

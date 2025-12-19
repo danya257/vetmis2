@@ -494,22 +494,20 @@
     <div class="container">
       <div class="logo">VetMis</div>
       <div class="auth-nav">
+        <!-- В base.html -->
         {% if user.is_authenticated %}
-        <div class="user-menu">
-          <span class="user-greeting">
-            {% if user.user_type == 'owner' %}👑 Владелец
-            {% elif user.user_type == 'vet' %}⚕️ Ветеринар
-            {% else %}🏢 Админ клиники{% endif %}
-          </span>
-          <a href="{% if user.user_type == 'owner' %}{% url 'pets:pet_list' %}{% else %}{% url 'clinics:clinic_list' %}{% endif %}"
-            class="btn btn-sm">Кабинет</a>
-          <a href="{% url 'users:logout' %}" class="btn btn-outline">Выйти</a>
-        </div>
+        {% if user.user_type == 'owner' %}
+        <!-- Владельцы: питомцы, чаты, блог -->
+        <a href="{% url 'pets:pet_list' %}">Питомцы</a>
+        <a href="{% url 'chat:chat_list' %}">Чаты</a>
+        <a href="{% url 'blog:home' %}">Блог</a>
         {% else %}
-        <div class="auth-buttons">
-          <a href="{% url 'users:login_owner' %}" class="btn btn-light">Войти как владелец</a>
-          <a href="{% url 'users:login_clinic' %}" class="btn btn-purple">Войти как клиника</a>
-        </div>
+        <!-- Клиники: дашборд, ветеринары, услуги -->
+        <a href="{% url 'clinics:dashboard' %}">Главная</a>
+        <a href="{% url 'clinics:vet_list' %}">Ветеринары</a>
+        <a href="{% url 'clinics:service_list' %}">Услуги</a>
+        {% endif %}
+        <a href="{% url 'users:logout' %}">Выйти</a>
         {% endif %}
       </div>
     </div>

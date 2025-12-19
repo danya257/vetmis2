@@ -9,14 +9,13 @@ class HomeView(TemplateView):
     template_name = 'core/home.html'
 
 class DashboardRedirectView(LoginRequiredMixin, RedirectView):
-    """Единая точка входа после логина — перенаправляет по роли."""
     def get_redirect_url(self, *args, **kwargs):
         user = self.request.user
         if user.user_type == 'owner':
             return reverse('pets:pet_list')
         elif user.user_type in ['vet', 'clinic_admin']:
-            return reverse('clinics:clinic_list')
-        return reverse('core:home')
+            return reverse('clinics:dashboard')  # ← именно так
+        return reverse('blog:home')
 
 class RoleBasedRedirectView(LoginRequiredMixin, RedirectView):
     """Перенаправление после входа в зависимости от роли."""

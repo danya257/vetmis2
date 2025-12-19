@@ -12,20 +12,21 @@
     {% if clinic.phone %}<p><strong>📞 Телефон:</strong> {{ clinic.phone }}</p>{% endif %}
     {% if clinic.email %}<p><strong>✉️ Email:</strong> {{ clinic.email }}</p>{% endif %}
     {% if clinic.website %}
-      <p><strong>🌐 Сайт:</strong> <a href="{{ clinic.website }}" target="_blank" style="color: var(--primary); text-decoration: none;">{{ clinic.website }}</a></p>
+    <p><strong>🌐 Сайт:</strong> <a href="{{ clinic.website }}" target="_blank"
+        style="color: var(--primary); text-decoration: none;">{{ clinic.website }}</a></p>
     {% endif %}
     {% if clinic.description %}
-      <p><strong>📋 Описание:</strong></p>
-      <p style="margin-left: 1.2rem;">{{ clinic.description|linebreaks }}</p>
+    <p><strong>📋 Описание:</strong></p>
+    <p style="margin-left: 1.2rem;">{{ clinic.description|linebreaks }}</p>
     {% endif %}
   </div>
 
   <div style="margin-top: 2rem;">
     <h2 style="font-size: 1.4rem; color: var(--primary-dark); margin-bottom: 1rem;">Администраторы</h2>
     {% if clinic.admins.all %}
-      <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-        {% for admin in clinic.admins.all %}
-          <div style="
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      {% for admin in clinic.admins.all %}
+      <div style="
             background: white;
             padding: 0.9rem 1.2rem;
             border-radius: var(--radius);
@@ -34,18 +35,35 @@
             align-items: center;
             gap: 0.6rem;
           ">
-            <span style="font-weight: 600;">{{ admin.get_full_name|default:admin.username }}</span>
-            <span style="background: #e1e5eb; color: var(--gray); padding: 2px 8px; border-radius: 10px; font-size: 0.85rem;">
-              {{ admin.get_user_type_display }}
-            </span>
-          </div>
-        {% endfor %}
+        <span style="font-weight: 600;">{{ admin.get_full_name|default:admin.username }}</span>
+        <span
+          style="background: #e1e5eb; color: var(--gray); padding: 2px 8px; border-radius: 10px; font-size: 0.85rem;">
+          {{ admin.get_user_type_display }}
+        </span>
       </div>
+      {% endfor %}
+    </div>
     {% else %}
-      <p style="color: var(--gray);">Нет назначенных администраторов.</p>
+    <p style="color: var(--gray);">Нет назначенных администраторов.</p>
     {% endif %}
   </div>
-
+  <h3>Услуги</h3>
+  {% for service in clinic.services.all %}
+  <p><strong>{{ service.name }}</strong> — {{ service.price }} руб.</p>
+  {% endfor %}
+  {% if user.is_authenticated and user.user_type == 'owner' %}
+  <div style="margin-top: 1.5rem;">
+    <h3>Написать ветеринару</h3>
+    {% for vet in clinic.admins.all %}
+    {% if vet.user_type in 'vet,clinic_admin' %}
+    <a href="{% url 'chat:start_chat' clinic.id vet.id %}" class="btn"
+      style="margin-right: 0.5rem; margin-bottom: 0.5rem;">
+      📩 {{ vet.get_full_name|default:vet.username }}
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
   <div style="margin-top: 2rem; text-align: center;">
     <a href="{% url 'clinics:clinic_list' %}" class="btn" style="background: #6c757d;">← Назад к списку</a>
   </div>
