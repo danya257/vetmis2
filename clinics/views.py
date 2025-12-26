@@ -167,8 +167,15 @@ class ServiceListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        clinic_ids = Clinic.objects.filter(admins=user).values_list('id', flat=True)
-        return Service.objects.filter(clinic_id__in=clinic_ids)
+        self.clinic = Clinic.objects.filter(admins=user).first()  # ← сохраняем клинику
+        if not self.clinic:
+            raise PermissionDenied
+        return Service.objects.filter(clinic=self.clinic)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['clinic'] = self.clinic  # ← передаём в шаблон
+        return context
 
 
 class ServiceCreateView(LoginRequiredMixin, CreateView):
@@ -243,3 +250,26 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         if request.user not in service.clinic.admins.all():
             raise PermissionDenied("Доступ запрещён")
         return super().dispatch(request, *args, **kwargs)    
+# clinics/views.py
+class PublicClinicDetailView(DetailView):
+    model = Clinic
+    template_name = 'clinics/clinic_detail_public.html'
+    context_object_name = 'clinic'
+    
+# clinics/views.py
+from django.db.models import Q
+
+class PublicClinicListView(ListView):
+    model = Clinic
+    template_name = 'clinics/clinic_list_public.html'
+    context_object_name = 'clinics'
+
+    def get_queryset(self):
+        queryset = Clinic.objects.all()
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(name__icontains=q) |
+                Q(services__name__icontains=q)
+            ).distinct()
+        return queryset.order_by('name')    

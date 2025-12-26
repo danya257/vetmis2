@@ -1,22 +1,23 @@
-<!-- templates/users/base.html -->
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}VetMis — Цифровой ветпаспорт{% endblock %}</title>
+  <title>{% block title %}VetMis — Цифровой ветеринарный паспорт{% endblock %}</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
   <style>
     :root {
-      --primary: #4e73df;
-      --primary-dark: #3a5bc7;
-      --success: #1cc88a;
-      --light: #f8f9fc;
-      --dark: #333;
-      --gray: #6c757d;
-      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --radius: 12px;
+      --primary: #5e72e4;
+      --primary-light: #7b8fe8;
+      --accent: #46d1cc;
+      --bg: #f9fbfe;
+      --text: #2d3748;
+      --text-light: #718096;
+      --border: #edf2f7;
+      --radius: 14px;
+      --shadow: 0 6px 20px rgba(94, 114, 228, 0.1);
     }
 
     * {
@@ -27,23 +28,30 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--light);
-      color: var(--dark);
-      line-height: 1.6;
+      background: #d7e3f5ad;
+      /* -color: var(--bg); */
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
     }
 
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 24px;
     }
 
-    /* Header */
+    /* Анимированный прозрачный header */
     header {
-      background: linear-gradient(135deg, var(--primary), #3a5bc7);
-      color: white;
-      padding: 1rem 0;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 18px 0;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgb(204 234 237 / 60%);
+      border-bottom: 1px solid rgba(94, 114, 228, 0.1);
+      transition: all 0.3s ease;
     }
 
     header .container {
@@ -52,195 +60,102 @@
       align-items: center;
     }
 
-    header .logo {
+    /* Анимация перелива у логотипа */
+    .logo {
       font-weight: 700;
-      font-size: 1.4rem;
+      font-size: 1.55rem;
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    header .logo::before {
-      content: "🐾";
-      font-size: 1.6rem;
-    }
-
-    header nav a {
-      color: rgba(255, 255, 255, 0.9);
+      gap: 10px;
       text-decoration: none;
-      margin-left: 1.2rem;
+      background: linear-gradient(90deg, #5e72e4, #46d1cc, #5e72e4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+    }
+
+    .logo::before {
+      content: "🐾";
+      font-size: 1.8rem;
+      background: linear-gradient(90deg, #5e72e4, #46d1cc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientShift 8s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .auth-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .auth-nav a {
       font-weight: 500;
-      padding: 6px 12px;
-      border-radius: 8px;
-      transition: all 0.2s;
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: 50px;
+      transition: all 0.25s ease;
     }
 
-    header nav a:hover {
-      background: rgba(255, 255, 255, 0.15);
+    .auth-nav a:hover {
+      background: rgba(94, 114, 228, 0.12);
+      color: var(--primary);
     }
 
-    /* Main content */
     main {
-      padding: 3rem 0;
+      padding: 3.5rem 0 2rem;
     }
 
     .card {
       background: white;
       border-radius: var(--radius);
-      box-shadow: var(--card-shadow);
-      padding: 2.5rem;
-      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      padding: 2.8rem;
+      margin-bottom: 2.5rem;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 2.1rem;
       font-weight: 700;
-      margin-bottom: 1.5rem;
-      color: var(--primary-dark);
+      margin-bottom: 1.6rem;
+      color: var(--text);
     }
 
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: var(--dark);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e1e5eb;
-      border-radius: var(--radius);
-      font-size: 1rem;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
-    }
-
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 28px;
-      font-size: 1rem;
-      text-decoration-line: none;
-      font-weight: 600;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-    }
-
-    .btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    .btn-link {
-      background: none;
-      color: var(--primary);
-      padding: 0;
-      text-decoration: none;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-link:hover {
-      text-decoration: none;
-      color: var(--primary-dark);
-      transform: none;
-    }
-
-    .text-center {
-      text-align: center;
-    }
-
-    .mt-4 {
-      margin-top: 1.5rem;
-    }
-
-    .mb-0 {
-      margin-bottom: 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      color: var(--gray);
-      font-size: 0.9rem;
-    }
-
-    /* Messages */
-    .alert {
-      padding: 1rem;
-      border-radius: var(--radius);
-      margin-bottom: 1.5rem;
-      font-weight: 500;
-    }
-
-    .alert-success {
-      background: #d1f0e0;
-      color: #107d55;
-      border-left: 4px solid var(--success);
-    }
-
-    .alert-error {
-      background: #fde8e8;
-      color: #a82a2a;
-      border-left: 4px solid #e74a3b;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .card {
-        padding: 1.8rem;
-      }
-
-      h1 {
-        font-size: 1.6rem;
-      }
-
-      header .container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      header nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-    }
-
-    /* Floating input style */
+    /* Floating inputs */
     .input-group {
       position: relative;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.6rem;
     }
 
     .input-group input,
     .input-group select,
     .input-group textarea {
       width: 100%;
-      padding: 16px 16px 16px 16px;
+      padding: 16px;
       font-size: 1rem;
-      border: 2px solid #e1e5eb;
+      border: 2px solid var(--border);
       border-radius: var(--radius);
       background: white;
-      transition: border-color 0.3s, box-shadow 0.3s;
+      transition: all 0.3s ease;
       outline: none;
     }
 
@@ -249,12 +164,11 @@
       top: 16px;
       left: 16px;
       font-size: 1rem;
-      color: #6c757d;
+      color: var(--text-light);
       pointer-events: none;
       transition: all 0.3s ease;
     }
 
-    /* Когда поле в фокусе или заполнено — метка поднимается */
     input:focus+label,
     input:not(:placeholder-shown)+label,
     select:focus+label,
@@ -274,216 +188,125 @@
     select:focus,
     textarea:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+      box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.2);
     }
 
-    /* Placeholder должен быть пустым для :not(:placeholder-shown) */
     .input-group input::placeholder {
       opacity: 0;
     }
 
-    /* Анимированные иконки животных */
-    .animal-icon {
-      display: inline-block;
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 12px;
-    }
-
-    /* Собака: бег (покачивание) */
-    .dog-run {
-      animation: run-wiggle 1.5s ease-in-out infinite;
-    }
-
-    @keyframes run-wiggle {
-
-      0%,
-      100% {
-        transform: rotate(0deg);
-      }
-
-      25% {
-        transform: rotate(3deg);
-      }
-
-      75% {
-        transform: rotate(-3deg);
-      }
-    }
-
-    /* Кот: прыжок */
-    .cat-bounce {
-      animation: bounce 2s ease-in-out infinite;
-    }
-
-    @keyframes bounce {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-15px);
-      }
-    }
-
-    /* Птица: мах крыльями */
-    .bird-flap {
-      animation: flap 0.8s ease-in-out infinite;
-    }
-
-    @keyframes flap {
-
-      0%,
-      100% {
-        transform: rotate(0deg);
-      }
-
-      50% {
-        transform: rotate(12deg);
-      }
-    }
-
-    /* Хомяк: копание */
-    .rodent-dig .paw {
-      animation: dig 1.2s ease-in-out infinite;
-    }
-
-    @keyframes dig {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(5px);
-      }
-    }
-
-    /* Кролик: прыжок */
-    .rabbit-hop {
-      animation: hop 1.8s ease-in-out infinite;
-    }
-
-    @keyframes hop {
-
-      0%,
-      100% {
-        transform: translateY(0);
-      }
-
-      50% {
-        transform: translateY(-12px);
-      }
-    }
-
-    /* Ящерица: ползание */
-    .reptile-crawl {
-      animation: crawl 3s linear infinite;
-    }
-
-    @keyframes crawl {
-      0% {
-        transform: translateX(0);
-      }
-
-      50% {
-        transform: translateX(5px);
-      }
-
-      100% {
-        transform: translateX(0);
-      }
-    }
-
-    /* Стиль по умолчанию */
-    .default-pulse {
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.6;
-      }
-    }
-
-    .auth-nav {
-      display: flex;
+    /* Кнопки */
+    .btn {
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-    }
-
-    .user-menu {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 6px 14px;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #000000;
+      text-decoration: none;
+      border: none;
       border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      background: var(--primary);
+      box-shadow: 0 4px 14px rgba(94, 114, 228, 0.3);
     }
 
-    .user-greeting {
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 500;
+    .btn:hover {
+      background: var(--primary-light);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(94, 114, 228, 0.4);
     }
 
-    .btn-sm {
-      padding: 6px 16px;
-      font-size: 0.95rem;
-      transform: none !important;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.6);
-    }
-
-    .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
+    .btn:active {
+      transform: translateY(0);
     }
 
     .btn-light {
       background: white;
       color: var(--primary);
-      border: none;
+      box-shadow: 0 4px 12px rgba(94, 114, 228, 0.12);
     }
 
     .btn-light:hover {
       background: #f0f4ff;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(94, 114, 228, 0.2);
     }
 
     .btn-purple {
-      background: #6f42c1;
-      color: white;
-      border: none;
+      background: linear-gradient(135deg, #7b5eea, #46d1cc);
+      box-shadow: 0 4px 14px rgba(123, 94, 234, 0.3);
     }
 
     .btn-purple:hover {
-      background: #5a32a3;
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, #6a4ddb, #3acbc0);
+      box-shadow: 0 6px 20px rgba(123, 94, 234, 0.4);
     }
 
-    /* Адаптивность */
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: white;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Сообщения */
+    .alert {
+      padding: 1.1rem 1.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.6rem;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background: #e8f7f6;
+      color: #0d9a93;
+      border-left: 4px solid var(--accent);
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      color: #e53e3e;
+      border-left: 4px solid #fc8181;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 0;
+      color: var(--text-light);
+      font-size: 0.95rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* Мобильные */
     @media (max-width: 768px) {
-      .auth-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      header .container {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .auth-nav {
+        justify-content: center;
       }
 
       .btn {
-        padding: 10px 16px;
-        font-size: 0.95rem;
+        width: 100%;
+        max-width: 300px;
+      }
+
+      main {
+        padding: 2rem 0 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
       }
     }
   </style>
@@ -492,22 +315,24 @@
 <body>
   <header>
     <div class="container">
-      <div class="logo">VetMis</div>
+      <a href="{% url 'blog:home' %}" class="logo">VetMis</a>
       <div class="auth-nav">
-        <!-- В base.html -->
+        <a href="{% url 'clinics:clinic_list_public' %}"
+          style="color: rgb(61, 61, 248); text-decoration: none; font-weight: 500;">Клиники</a>
         {% if user.is_authenticated %}
         {% if user.user_type == 'owner' %}
-        <!-- Владельцы: питомцы, чаты, блог -->
         <a href="{% url 'pets:pet_list' %}">Питомцы</a>
         <a href="{% url 'chat:chat_list' %}">Чаты</a>
         <a href="{% url 'blog:home' %}">Блог</a>
         {% else %}
-        <!-- Клиники: дашборд, ветеринары, услуги -->
         <a href="{% url 'clinics:dashboard' %}">Главная</a>
         <a href="{% url 'clinics:vet_list' %}">Ветеринары</a>
         <a href="{% url 'clinics:service_list' %}">Услуги</a>
         {% endif %}
-        <a href="{% url 'users:logout' %}">Выйти</a>
+        <a href="{% url 'users:logout' %}" class="btn-outline">Выйти</a>
+        {% else %}
+        <a href="{% url 'users:login_owner' %}" class="btn-light">Владелец</a>
+        <a href="{% url 'users:login_clinic' %}" class="btn btn-purple">Клиника</a>
         {% endif %}
       </div>
     </div>
@@ -521,44 +346,45 @@
     </div>
     {% endfor %}
     {% endif %}
-
     {% block content %}{% endblock %}
   </main>
 
   <footer class="container">
-    &copy; 2025 VetMis — Цифровой ветеринарный паспорт. Все права защищены.
+    &copy; 2025 VetMis — Цифровой ветеринарный паспорт. Забота о каждом хвостике.
   </footer>
 
-  <!-- Легкий JS для улучшения UX -->
+  <!-- JS для инпутов -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Добавляем "глазик" для пароля (опционально)
-      const passwordFields = document.querySelectorAll('input[type="password"]');
-      passwordFields.forEach(field => {
-        if (field.parentNode.querySelector('.toggle-password')) return;
+      // Placeholder для floating labels
+      document.querySelectorAll('.input-group input, .input-group textarea')
+        .forEach(el => {
+          if (!el.hasAttribute('placeholder')) el.setAttribute('placeholder', ' ');
+        });
 
+      // Toggle пароля
+      document.querySelectorAll('input[type="password"]').forEach(field => {
+        if (field.parentNode.querySelector('.toggle-password')) return;
         const toggle = document.createElement('button');
         toggle.type = 'button';
         toggle.innerHTML = '👁️';
-        toggle.style = `
-          position: absolute;
-          right: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          color: var(--gray);
-          cursor: pointer;
-          font-size: 1.2rem;
-        `;
-        toggle.classList.add('toggle-password');
-
+        Object.assign(toggle.style, {
+          position: 'absolute',
+          right: '12px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'none',
+          border: 'none',
+          color: '#a0aec0',
+          cursor: 'pointer',
+          fontSize: '1.2rem',
+          zIndex: '2'
+        });
         const wrapper = document.createElement('div');
-        wrapper.style = 'position: relative;';
-        field.parentNode.insertBefore(wrapper, field);
+        wrapper.style.position = 'relative';
+        field.parentNode.replaceChild(wrapper, field);
         wrapper.appendChild(field);
         wrapper.appendChild(toggle);
-
         toggle.addEventListener('click', () => {
           field.type = field.type === 'password' ? 'text' : 'password';
           toggle.innerHTML = field.type === 'password' ? '👁️' : '🙈';
@@ -566,31 +392,10 @@
       });
 
       // Анимация кнопок
-      const buttons = document.querySelectorAll('.btn');
-      buttons.forEach(btn => {
+      document.querySelectorAll('.btn').forEach(btn => {
         btn.addEventListener('mousedown', () => btn.style.transform = 'translateY(0)');
-        btn.addEventListener('mouseup', () => btn.style.transform = 'translateY(-2px)');
+        btn.addEventListener('mouseup', () => btn.style.transform = 'translateY(-3px)');
       });
-    });
-    // Добавим пустой placeholder, если его нет
-    document.querySelectorAll('.input-group input, .input-group textarea').forEach(input => {
-      if (!input.hasAttribute('placeholder')) {
-        input.setAttribute('placeholder', ' ');
-      }
-    });
-
-    // Для select: добавим обработчик изменения
-    document.querySelectorAll('.input-group select').forEach(select => {
-      const label = select.nextElementSibling;
-      if (label && label.tagName === 'LABEL') {
-        select.addEventListener('change', () => {
-          if (select.value) {
-            label.classList.add('filled');
-          } else {
-            label.classList.remove('filled');
-          }
-        });
-      }
     });
   </script>
 </body>

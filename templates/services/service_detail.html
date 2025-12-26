@@ -9,7 +9,11 @@
   <div style="margin-top: 2rem;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
       <h2>Назначенные ветеринары</h2>
-      <a href="{% url 'services:assignment_create' clinic.id service.id %}" class="btn" style="padding: 6px 12px; font-size: 0.9rem;">+ Назначить</a>
+      <a href="{% url 'services:assignment_create' clinic.id service.id %}" 
+   class="btn" 
+   style="background: #17a2b8; padding: 8px 16px; font-size: 0.95rem; display: inline-block;">
+  👨‍⚕️ Назначить ветеринара
+</a>
     </div>
     {% for assign in assignments %}
       <div style="padding: 1rem; background: #f0f8ff; border-radius: var(--radius); margin-bottom: 0.8rem;">
