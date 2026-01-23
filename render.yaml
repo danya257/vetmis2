@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: vetmis2
+    runtime: python
+    region: frankfurt # или ваш регион
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: urogineco.settings  # ← замените на ваш путь к settings!
+      - key: PYTHON_VERSION
+        value: 3.11.9
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn urogineco.wsgi:application"  # ← замените на ваш wsgi-модуль!
+    env:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vetmis2-db
+          property: connectionString
+
+databases:
+  - name: vetmis2-db
+    databaseName: vetmis2_db
+    user: vetmis2_user
