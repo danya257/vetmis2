@@ -1,9 +1,14 @@
-```
-# Compiled and build artifacts
-*.pyc
+# Database
+db.sqlite3
+
+# Python
 __pycache__/
+*.pyc
 *.pyo
 *.pyd
+*.py~
+*.db
+*.sqlite3
 
 # Dependencies
 .venv/
@@ -15,18 +20,30 @@ env/
 
 # Logs and temp files
 *.log
-*.tmp
-*.swp
-*.swo
+local_settings.py
+media/
+staticfiles/
+.DS_Store
 
-# Editors
+# Migrations
+*pickle*
+*.pot
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 *.sublime-project
 *.sublime-workspace
 
 # OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Coverage reports
@@ -46,6 +63,6 @@ build/
 .mypy_cache/
 .hypothesis/
 
-# Local configuration
-local_settings.py
-```
+# Environment
+pip-log.txt
+pip-delete-this-directory.txt

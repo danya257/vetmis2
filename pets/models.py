@@ -27,6 +27,7 @@ class Pet(models.Model):
     breed = models.CharField('Порода', max_length=100, blank=True)
     birth_date = models.DateField('Дата рождения', null=True, blank=True)
     chip_number = models.CharField('Номер чипа', max_length=50, unique=True, blank=True, null=True)
+    photo = models.ImageField('Фото питомца', upload_to='pets/photos/', blank=True, null=True)
     qr_uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, verbose_name='UUID для QR')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Создан')
 

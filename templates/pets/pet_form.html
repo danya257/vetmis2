@@ -6,7 +6,7 @@
 <div class="card">
   <h1>{% if object %}Редактировать питомца{% else %}Добавить питомца{% endif %}</h1>
 
-  <form method="post" style="margin-top: 1.5rem;">
+  <form method="post" enctype="multipart/form-data" style="margin-top: 1.5rem;">
     {% csrf_token %}
 
     <div class="input-group">
@@ -32,6 +32,11 @@
     <div class="input-group">
       {{ form.chip_number }}
       <label for="{{ form.chip_number.id_for_label }}">Номер чипа (опционально)</label>
+    </div>
+
+    <div class="input-group" style="flex-direction: column; align-items: flex-start;">
+      <label for="{{ form.photo.id_for_label }}" style="position: static; margin-bottom: 0.5rem;">Фото питомца (опционально)</label>
+      {{ form.photo }}
     </div>
 
     <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
