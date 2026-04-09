@@ -12,17 +12,24 @@ from django.urls import reverse_lazy
 
 class OwnerLoginView(LoginView):
     template_name = 'users/login_owner.html'
-    success_url = reverse_lazy('core:dashboard')
 
     def get_success_url(self):
         return reverse_lazy('core:dashboard')
+
+    def form_invalid(self, form):
+        form.add_error(None, "Неверное имя пользователя или пароль")
+        return super().form_invalid(form)
 
 class ClinicLoginView(LoginView):
     template_name = 'users/login_clinic.html'
-    success_url = reverse_lazy('core:dashboard')
 
     def get_success_url(self):
         return reverse_lazy('core:dashboard')
+
+    def form_invalid(self, form):
+        form.add_error(None, "Неверное имя пользователя или пароль")
+        return super().form_invalid(form)
+
 class CustomLoginView(LoginView):
     template_name = 'users/login.html'
     authentication_form = AuthenticationForm
