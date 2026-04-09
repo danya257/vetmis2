@@ -202,13 +202,16 @@
       pointer-events: none;
       transition: all 0.3s ease;
       background: transparent;
-      z-index: 1;
+      z-index: 10;
     }
 
     /* Скрываем подсказку при фокусе или когда есть значение */
     .input-group input:focus ~ label,
     .input-group input:not(:placeholder-shown) ~ label,
     .input-group input.has-value ~ label,
+    .input-group input[type="password"]:focus ~ label,
+    .input-group input[type="password"]:not(:placeholder-shown) ~ label,
+    .input-group input[type="password"].has-value ~ label,
     .input-group textarea:focus ~ label,
     .input-group textarea:not(:placeholder-shown) ~ label,
     .input-group textarea.has-value ~ label,

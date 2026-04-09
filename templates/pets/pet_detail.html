@@ -72,6 +72,7 @@
   </div>
 
   <div style="margin-top: 2rem; text-align: center;">
+    <a href="{% url 'pets:pet_edit' pet.pk %}" class="btn" style="background: var(--primary);">✏️ Редактировать данные</a>
     <a href="{% url 'pets:pet_list' %}" class="btn" style="background: #6c757d;">← Назад к списку</a>
   </div>
 </div>
