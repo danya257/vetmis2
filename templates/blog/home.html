@@ -1,6 +1,6 @@
 <!-- templates/blog/home.html -->
 {% extends 'base.html' %}
-{% block title %}VetMis — Блог о здоровье питомцев{% endblock %}
+{% block title %}EKM-PET — Блог о здоровье питомцев{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -23,7 +23,7 @@
       </h2>
       
       <p style="color: var: (--gray); font-size: 0.95rem; margin: 0.6rem 0;">
-        Автор: {{ article.author.get_full_name|default:article.author.username|default:"Администрация VetMis" }} 
+        Автор: {{ article.author.get_full_name|default:article.author.username|default:"Администрация EKM-PET" }} 
         | {{ article.published_at|date:"d.m.Y" }}
       </p>
       

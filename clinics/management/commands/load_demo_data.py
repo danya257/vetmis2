@@ -13,7 +13,7 @@ import uuid
 User = get_user_model()
 
 class Command(BaseCommand):
-    help = 'Загружает демонстрационные данные для дипломной работы VetMis'
+    help = 'Загружает демонстрационные данные для дипломной работы EKM-PET'
 
     def handle(self, *args, **options):
         self.stdout.write('Удаление старых данных...')
