@@ -15,7 +15,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Database
 if os.getenv('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.parse(os.environ['DATABASE_URL'])
+        'default': {
+            **dj_database_url.parse(os.environ['DATABASE_URL']),
+            'CONN_MAX_AGE': 600,
+            'CONN_HEALTH_CHECKS': True,
+        }
     }
 else:
     DATABASES = {
