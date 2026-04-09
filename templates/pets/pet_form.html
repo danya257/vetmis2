@@ -26,7 +26,7 @@
 
     <div class="input-group">
       {{ form.birth_date }}
-      <label for="{{ form.birth_date.id_for_label }}">Дата рождения</label>
+      <label for="{{ form.birth_date.id_for_label }}" class="floating-label">Дата рождения</label>
     </div>
 
     <div class="input-group">
@@ -34,9 +34,17 @@
       <label for="{{ form.chip_number.id_for_label }}">Номер чипа (опционально)</label>
     </div>
 
-    <div class="input-group" style="flex-direction: column; align-items: flex-start;">
-      <label for="{{ form.photo.id_for_label }}" style="position: static; margin-bottom: 0.5rem;">Фото питомца (опционально)</label>
-      {{ form.photo }}
+    <div class="file-upload-wrapper" style="margin-bottom: 1.4rem;">
+      <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Фото питомца (опционально)</label>
+      <div class="file-upload-container">
+        {{ form.photo }}
+        <label for="{{ form.photo.id_for_label }}" class="file-upload-label">
+          <span class="file-upload-icon">📁</span>
+          <span class="file-upload-text">Выберите файл</span>
+          <span class="file-upload-subtext">или перетащите сюда</span>
+        </label>
+      </div>
+      <div class="file-name-display" id="file-name-display"></div>
     </div>
 
     <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
