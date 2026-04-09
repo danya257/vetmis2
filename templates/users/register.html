@@ -1,5 +1,5 @@
 <!-- templates/users/register.html -->
-{% extends 'users/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Регистрация — EKM-PET{% endblock %}
 
@@ -47,7 +47,7 @@
   </form>
 
   <div class="text-center mt-4">
-    <p class="mb-0">Уже есть аккаунт? <a href="{% url 'users:login' %}" class="btn-link">Войти</a></p>
+    <p class="mb-0">Уже есть аккаунт? <a href="{% url 'users:login_owner' %}" class="btn-link">Войти</a></p>
   </div>
 </div>
 {% endblock %}
