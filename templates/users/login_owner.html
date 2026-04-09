@@ -8,6 +8,13 @@
   </div>
   <form method="post" style="margin-top: 1.5rem;">
     {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" style="margin-bottom: 1rem;">
+        {% for error in form.non_field_errors %}
+          <p style="margin: 0;">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
     <div class="input-group">{{ form.username }}<label>Имя пользователя</label></div>
     <div class="input-group">{{ form.password }}<label>Пароль</label></div>
     <button type="submit" class="btn" style="width: 100%;">Войти как владелец</button>
