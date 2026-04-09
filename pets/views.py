@@ -1,7 +1,7 @@
 # pets/views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from .models import Pet
@@ -42,6 +42,20 @@ class PetCreateView(CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         messages.success(self.request, 'Питомец успешно добавлен!')
+        return super().form_valid(form)
+
+# Редактирование питомца
+class PetUpdateView(UpdateView):
+    model = Pet
+    form_class = PetForm
+    template_name = 'pets/pet_form.html'
+    success_url = reverse_lazy('pets:pet_list')
+
+    def get_queryset(self):
+        return Pet.objects.filter(owner=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Данные питомца успешно обновлены!')
         return super().form_valid(form)
 
 # Публичная страница по QR (без авторизации!)
